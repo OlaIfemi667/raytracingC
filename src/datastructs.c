@@ -77,4 +77,9 @@ double length_squared(Vector3 v){
 Vector3 unit_vector(Vector3 v) {
     return divideVector3(&v, length(v));
 }
+double vector_dot(const Vector3* u, const Vector3* v) {
+    return u->x * v->x
+         + u->y * v->y
+         + u->z * v->z;
+}
 

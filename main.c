@@ -1,10 +1,59 @@
 #include "include/datastructs.h"
 #include "include/colors.h"
 #include "include/ray.h"
+#include <math.h>
 #include <stdio.h>
+#include <stdbool.h>
+
+
+
+bool hitSquare(Point3* coordA, Point3* coordB, Point3* coordD, Ray *r)
+{
+    return  (r->direction.y <= coordA->y) &
+            (r->direction.y >= coordD->y) &
+            (r->direction.x <= coordB->x) &
+            (r->direction.x >= coordA->x) &
+            (r->direction.z <= 1);
+}
+
+
+
+double hit_sphere(Point3* center, double radius, Ray* r) {
+    Vector3 oc = subVector3(center, &r->origin);
+    double a = vector_dot(&r->direction, &r->direction);
+
+    double b = -2.0 * vector_dot(&r->direction, &oc);
+    double c = vector_dot(&oc, &oc) - radius*radius;
+    double discriminant = b*b - 4*a*c;
+    if (discriminant < 0) {
+        return -1.0;
+    } else {
+        return (-b - sqrt(discriminant) ) / (2.0*a);
+    }
+}
+
+
 
 Color rayColor(Ray r)
 {
+    Point3 p_part1 = {0,0,-1};
+    double t = hit_sphere(&p_part1, 0.5, &r);
+    if (t > 0.0) {
+        Point3 p_part2 = rayAt(r, t); 
+        Vector3 w = (Vector3){0, 0, -1};
+        Vector3 N_part1 = subVector3(&p_part2, &w);
+        Vector3 N = unit_vector(N_part1);
+        Vector3 final = (Color){N.x+1, N.y+1, N.z+1};
+        Vector3 to_return = multVector3const(&final , 0.5);
+        return to_return;
+    }
+
+
+    if (hitSquare(&(Point3){0.5, 0.5, 1},
+                  &(Point3){1, 0.5, 1},
+                  &(Point3){0.5, 0, 1}, &r))
+        return (Color){0, 0, 1.0};
+
     Color start = {1.0, 1.0, 1.0};
     Color end = {0.5, 0.7, 1.0};
 
@@ -34,7 +83,7 @@ int main(void)
     
     float aspect_ratio = 16.0 / 9.0;
 
-    int width = 400;
+    int width = 1600;
     // Calcule de height et s'assurer qu'il des différents de zéro
     
     int height = (int)(width / aspect_ratio);
@@ -58,6 +107,7 @@ int main(void)
                             .y = -viewport_height,
                             .z = 0
                         };
+
 
     // Calculate the horizontal and vertical delta vectors from pixel to pixel.
     Vector3 pixel_delta_u = divideVector3(&viewport_u, width);   

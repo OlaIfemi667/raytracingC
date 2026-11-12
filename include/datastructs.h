@@ -22,5 +22,5 @@ Vector3 divideVector3(Vector3 *v, double k);
 
 Vector3 unit_vector(Vector3 v);
 void printfVector3(Vector3 v);
-
+double vector_dot(const Vector3* u, const Vector3* v); 
 #endif

@@ -1,5 +1,7 @@
+CFLAGS = -Wall -Wextra
+
 main:
-	gcc -o main	main.c src/*c  -lm
+	clang  -o main	main.c src/*c  -lm $(CFLAGS)
 
 clean:
 	rm main 
